@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Jump Start: Selenium</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="NYC Data Science Academy" />
+    <link rel="stylesheet" href="asset/css/footer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Jump Start: Selenium
+### NYC Data Science Academy
+
+---
+
+
+
+## Outline
+- Intro to Selenium
+
+- Prerequisites
+
+- When to Use Selenium
+
+- General Workflow
+
+- Saving Data to a Database
+
+---
+## Intro to Selenium
+
+- Selenium is an alternative to Scrapy for scraping data from a website.
+
+- Performs similar tasks as Scrapy but is able to access the dynamic elements of a website.
+  - Scrapy is not able to do this on its own. 
+  
+- Selenium can access the elements of a website through a web browser that loads the webpage.
+  - Our implementation works through Chrome.
+
+---
+## Prerequisites
+#### Step #1
+- Windows users: 
+ - Download the latest stable version of chromedriver from [here](https://chromedriver.storage.googleapis.com/index.html)
+ 
+ - Unzip the exe file to any folder you want (preferably one with a short file path, your user folder is a good option)
+ 
+ - Take note of the full file path, we will need this later (e.g. C:\Users\myusername\chromedriver.exe)
+
+- Mac users:
+ - Install homebrew: http://brew.sh/
+ 
+ - Run `brew tap homebrew/cask` and `brew cask install chromedriver` on the terminal
+ 
+ - If you already have chromedriver installed and just want to upgrade your chromedriver, try `brew cask upgrade chromedriver`
+
+---
+## Prerequisites
+#### Step #2
+- Windows users: open Anaconda prompt and cd to the lecture folder. 
+ - `pip install -r requirements.txt`
+
+- Mac users: open Terminal and cd to the lecture folder. 
+ - `pip install -r requirements.txt`
+
+- What is requirements.txt?
+ - It lists all the required packages of the project you are developing and makes your work reproducible.
+ 
+- How to generate the requirement file?
+ - `pip freeze | grep selenium` to get the version of one package.
+ - `pip freeze &gt; requirements.txt` to save the version of all the packages in the `requirements.txt` file
+
+---
+## When Should We Use Selenium
+- We want to scrape all the reviews of the [Samsung Galaxy S8](https://www.verizonwireless.com/smartphones/samsung-galaxy-s8/) from Verizon's website.
+ 
+- You can find all the reviews on the reviews tabs and you need to click the Next button to go to the next page. 
+
+- However the url stays the same after clicking Next Page. This usually means this website uses [Ajax](https://en.wikipedia.org/wiki/Ajax_(programming) so you should consider using Selenium for webscraping.
+
+- Another important sign is when you get an empty list from scrapy shell, and you are pretty sure the xpath you typed is correct. This usually means that part of data is retrieved by making Ajax calls. 
+
+---
+## General Workflow
+- In `verizon_starter.py` file, we first initialize a Chrome browser:
+```python
+driver = webdriver.Chrome()
+```
+- You will see our script opens a new Chrome browser if you run `python verizon_starter.py` on the terminal/Anaconda Prompt.
+ 
+- Windows users need to specify the path to chrome driver you just downloaded.
+```python
+driver = webdriver.Chrome(r'path\to\the\chromedriver.exe')
+```
+- The letter `r` stands for raw string so `\t` will not be interpreted as tab.
+ 
+- Go to the page that we want to scrape:
+```python
+driver.get(url_you_want_to_scrape)
+```
+
+---
+## General Workflow
+
+- Use different locating methods from Selenium to find the element or elements you are looking for.
+ - Most commonly used ones are `find_element_by_xpath` and `find_elements_by_xpath`
+ - The first one returns a single element (tag) and the second one returns a list of elements (tags).
+ 
+ - Check more details on the documentation [here](http://selenium-python.readthedocs.io/locating-elements.html)
+
+- To test your xpath, you can print the length of the list or the value of the element on the terminal.
+
+- Once you locate the element, you can use `element.text` to return the text.
+
+- To get the attribute instead of the text of each element, use `element.get_attribute()`
+
+---
+## General Workflow
+
+- Locate the next button element on the page and then call `button.click()` to actually click it.
+
+- The script starts working but sometimes you might get an error saying that some element is not available on the page. 
+
+- This is because our code runs so fast and the new reviews or the button on the next page is not displayed yet due to the the lag of the Internet.
+
+- We can add `time.sleep(2)` at the end of the while loop to give the browser a 2 seconds buffer before we start scraping the next page.
+
+---
+## Explicit Waits
+
+- In the `verizon_final_csv.py` file, we save the scraped data to a local csv file.
+
+- We also use a more efficient way to handle the waiting called [Explicit Waits](http://selenium-python.readthedocs.io/waits.html?).
+
+- Instead of always implicitly waiting a certain amount of time, we wait until the elements become available or clickable.
+
+---
+
+## Explicit Waits
+
+- Tell the driver (browser) to wait at most 10 seconds.
+```python
+wait_review = WebDriverWait(driver, 10)
+```
+```python
+wait_button = WebDriverWait(driver, 10)
+```
+
+- Wait for all the reviews to be displayed on the page.
+```python
+wait_review.until(EC.presence_of_all_elements_located((...)))
+```
+ 
+- Wait for the next button to be clickable.
+```python
+wait_button.until(EC.element_to_be_clickable(()))
+```
+---
+## Common Tricks Using Selenium
+- [Login a website](https://stackoverflow.com/a/21186465)
+
+- [Infinite Scroll](https://stackoverflow.com/a/52154646)
+
+- [Go Incognito Mode](https://stackoverflow.com/a/27630230)
+
+- [Open a new tab](https://stackoverflow.com/a/28432939)
+
+- [Switch between tabs](https://stackoverflow.com/a/28716311)
+
+- [Switch between windows](https://stackoverflow.com/a/39037983)
+
+---
+## Saving Data to Database
+
+- In the `verizon_final_db.py` file, we give an example how to save the scraped data to a MySQL database.
+
+- We use a package named [peewee](http://peewee.readthedocs.io/en/latest/peewee/quickstart.html) to help us connect to the remote database. 
+
+- Windows users:
+ - Go [here](https://www.lfd.uci.edu/~gohlke/pythonlibs/) and search for peewee.
+ - Download the cp version that matches your python installation.
+ - Go to the directory where you downloaded the file and `pip install &lt;FILENAME&gt;` (you can just type a few chars and tab). 
+ - Or move the file to your users (where Anaconda will default to) and just type `pip install &lt;FILENAME&gt;` from there.
+
+- Mac users: open Terminal and switch to python3 environment.
+ - `pip install peewee`
+
+---
+## Saving Data to Database
+
+- We use a configuration file to save all the settings for our database.
+
+- You need to replace the username and password with yours in the `conf.ini` file.
+
+- **When you push the project to Github, remember to put all the configuration files in the `.gitignore` file, especially the ones that have any password.**
+
+- In the `conf.ini` file, we have a section named `database` and assign all the values using a dictionary like notation. Check more examples from the [documentation](https://docs.python.org/3/library/configparser.html)
+```python
+[database]
+db_name = your_username_db
+db_port = your_port_number
+db_host = your_ip_address
+user = your_username
+passwd = your_password
+```
+
+---
+## Saving Data to Database
+
+- In the `db.py` file, we use a ConfigParser to get all the settings.
+
+```python
+cfg = ConfigParser(interpolation=None)
+cfg.read('conf.ini')
+db_conf = cfg['database']
+db_name = db_conf['db_name']
+db_port = db_conf['db_port']
+db_host = db_conf['db_host']
+user = db_conf['user']
+passwd = db_conf['passwd']
+```
+
+- After getting the settings from ConfigParser, we initialize a MySQL database object using `peewee` and then connect it.
+
+```python
+myDB = MySQLDatabase(db_name, host=db_host, 
+       port=int(db_port), user=user, passwd=passwd)
+myDB.connect()
+```
+
+---
+## Saving Data to Database
+
+- Then we create a `Review` class to represent the Review table we want to create in our database.
+```python
+  class Review(Model):
+	  username = TextField()
+	  title = TextField()
+	  text = TextField()
+	  date_published = TextField()
+	  rating = IntegerField()
+
+	  class Meta:
+		  database = myDB
+```
+
+- In peewee, class and field have their corresponding meaning in MySQL database.
+
+|Object|	Corresponds to|
+| ------------- |:-------------:|
+|Model class|	Database table|
+|Field instance|	Column in a table|
+|Model instance|	Row in a table|
+
+---
+## Saving Data to Database
+
+- The best way to understand how the Model and field works in peewee is to read the [documentation](http://peewee.readthedocs.io/en/latest/peewee/models.html#models-and-fields).
+
+- We create a separate Review object for each review at the end of the while loop and save it as one row of our table.
+```python
+cur_review = Review(username=username,
+				title=title,
+				text=text,
+				date_published=date_published,
+				rating=rating)
+cur_review.save()
+```
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script>
+(function () {
+  $('.remark-slide-content').prepend('<div class="nyc-header" />');
+})();
+</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
