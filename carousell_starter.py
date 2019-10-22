@@ -25,7 +25,7 @@ time.sleep(3)
 index = 1
 # We want to start the first two pages.
 # If everything works, we will change it to while True
-while index <=5:
+while index <=10:
 	try:
 		print("Scraping chunk number " + str(index))
 		index = index + 1
@@ -54,9 +54,6 @@ while index <=5:
 			print('Price = {}'.format(price))
 			print('User = {}'.format(user))
 			print('='*50)
-
-
-			# OPTIONAL: How can we deal with the "read more" button?
 			
 			# Use relative xpath to locate text, username, date_published, rating.
 			# Your code here
@@ -79,13 +76,13 @@ while index <=5:
 
 		# We need to scroll to the bottom of the page because the button is not in the current view yet.
 		#driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-		time.sleep(1)
+		#time.sleep(1)
 		# Locate the next button element on the page and then call `button.click()` to click it.
 		button = driver.find_element_by_xpath('//button[@class="styles__button___3dxOP desktop__button___2Hl0n styles__medium___3KEDn styles__outline___3AGrh desktop__outline___2UF39 styles__loadMore___yYAF4"]')
 		actions = ActionChains(driver)
 		actions.move_to_element(button).click().perform()
 
-		time.sleep(2)
+		time.sleep(1)
 
 	except Exception as e:
 		print(e)
