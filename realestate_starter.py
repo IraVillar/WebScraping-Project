@@ -15,7 +15,7 @@ driver.get("https://www.carousell.ph/")
 
 #category_urls = driver.find_elements_by_xpath('//*[@id="root"]/div/div[4]/div[1]/div/div[1]/div[1]/div/a/@href')
 
-csv_file = open('carousell.csv', 'w', encoding='utf-8', newline='')
+csv_file = open('realestate.csv', 'w', encoding='utf-8', newline='')
 writer = csv.writer(csv_file)
 
 property_button = driver.find_element_by_xpath('//div[2]/a[@class="styles__collectionLink___37_IC styles__link___9msaS"]')
@@ -25,7 +25,7 @@ time.sleep(3)
 index = 1
 # We want to start the first two pages.
 # If everything works, we will change it to while True
-while index <=10:
+while index <=2:
 	try:
 		print("Scraping chunk number " + str(index))
 		index = index + 1
@@ -78,11 +78,16 @@ while index <=10:
 		#driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 		#time.sleep(1)
 		# Locate the next button element on the page and then call `button.click()` to click it.
-		button = driver.find_element_by_xpath('//button[@class="styles__button___3dxOP desktop__button___2Hl0n styles__medium___3KEDn styles__outline___3AGrh desktop__outline___2UF39 styles__loadMore___yYAF4"]')
-		actions = ActionChains(driver)
-		actions.move_to_element(button).click().perform()
+		try:
+			button = driver.find_element_by_xpath('//button[@class="styles__button___3dxOP desktop__button___2Hl0n styles__medium___3KEDn styles__outline___3AGrh desktop__outline___2UF39 styles__loadMore___yYAF4"]')
+			time.sleep(1)
+			actions = ActionChains(driver)
+			actions.move_to_element(button).click().perform()
 
-		time.sleep(1)
+			time.sleep(1)
+
+		except:
+			writer.writerow(listings_dict.values())
 
 	except Exception as e:
 		print(e)
