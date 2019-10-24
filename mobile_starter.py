@@ -15,11 +15,11 @@ driver.get("https://www.carousell.ph/")
 
 #category_urls = driver.find_elements_by_xpath('//*[@id="root"]/div/div[4]/div[1]/div/div[1]/div[1]/div/a/@href')
 
-csv_file = open('realestate.csv', 'w', encoding='utf-8', newline='')
+csv_file = open('mobile.csv', 'w', encoding='utf-8', newline='')
 writer = csv.writer(csv_file)
 
 time.sleep(3)
-property_button = driver.find_element_by_xpath('//div[2]/a[@class="styles__collectionLink___37_IC styles__link___9msaS"]')
+property_button = driver.find_element_by_xpath('//div[4]/a[@class="styles__collectionLink___37_IC styles__link___9msaS"]')
 property_button.click()
 time.sleep(3)
 
@@ -48,7 +48,8 @@ while index <=15:
 
 			price = listing.find_element_by_xpath('.//p[@class="styles__text___1gJzw styles__colorUrbanGrey60___2rwkI styles__overflowNormal___mT74G styles__singleline___nCFol styles__textAlignLeft___lqg5e styles__weightRegular___19l6i desktop__sizeM___3k5LI"]').text
 			user = listing.find_element_by_xpath('.//p[@class="styles__text___1gJzw styles__colorUrbanGrey90___2NNa9 styles__overflowNormal___mT74G styles__singleline___nCFol styles__textAlignLeft___lqg5e styles__weightSemibold___uxIDP desktop__sizeS___30RAN"]').text
-			#to scroll into view
+			status = listing.find_element_by_xpath('.//p[4][@class="styles__text___1gJzw styles__colorUrbanGrey60___2rwkI styles__overflowNormal___mT74G styles__singleline___nCFol styles__textAlignLeft___lqg5e styles__weightRegular___19l6i desktop__sizeS___30RAN"]').text
+			#status = listing.find_element_by_xpath('//*[@id="root"]/div/div[3]/div[1]/div[2]/main/div[1]/div/div/div[1]/a[2]/p[4]').text
 			driver.execute_script("arguments[0].scrollIntoView();",listing)
 			
 			#print('Product = {}'.format(product))
@@ -67,6 +68,7 @@ while index <=15:
 			listings_dict['product'] = product
 			listings_dict['price'] = price 
 			listings_dict['user'] = user
+			listings_dict['status'] = status
 			# review_dict['date_published'] = date_published
 			#review_dict['rating'] = rating
 
