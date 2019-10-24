@@ -26,7 +26,7 @@ time.sleep(3)
 index = 1
 # We want to start the first two pages.
 # If everything works, we will change it to while True
-while index <=10:
+while index <=15:
 	try:
 		print("Scraping chunk number " + str(index))
 		index = index + 1
