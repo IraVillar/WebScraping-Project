@@ -15,12 +15,13 @@ driver.get("https://www.carousell.ph/")
 
 tab = driver.find_element_by_xpath('//*[@id="root"]/div/div[4]/div[1]/div[1]/div/div[2]')
 tab.click()
-
 time.sleep(2)
-category_button = driver.find_element_by_xpath('//*[@id="root"]/div/div[4]/div[1]/div[1]/div/div[2]/div[15]/a/img')
+tab.click()
+time.sleep(2)
+category_button = driver.find_element_by_xpath('//*[@id="root"]/div/div[4]/div[1]/div[1]/div/div[2]/div[22]/a/img')
 category_button.click()
 
-csv_file = open('3travel.csv', 'w', encoding='utf-8', newline='')
+csv_file = open('craft.csv', 'w', encoding='utf-8', newline='')
 writer = csv.writer(csv_file)
 
 index = 1
@@ -36,7 +37,7 @@ while index <=15:
 
 		listings = driver.find_elements_by_xpath('//div[@class="styles__cardContent___TpQXu"]')
 		#listings = driver.find_elements_by_xpath('//div[@class="styles__listingsWrapper___2RJeL"]')
-
+		#listings_dict = {}
 		# Iterate through the list and find the details of each review.
 		for listing in listings:
 			# Initialize an empty dictionary for each review
@@ -52,7 +53,7 @@ while index <=15:
 
 			price = listing.find_element_by_xpath('.//p[@class="styles__text___1gJzw styles__colorUrbanGrey60___2rwkI styles__overflowNormal___mT74G styles__singleline___nCFol styles__textAlignLeft___lqg5e styles__weightRegular___19l6i desktop__sizeM___3k5LI"]').text
 			user = listing.find_element_by_xpath('.//p[@class="styles__text___1gJzw styles__colorUrbanGrey90___2NNa9 styles__overflowNormal___mT74G styles__singleline___nCFol styles__textAlignLeft___lqg5e styles__weightSemibold___uxIDP desktop__sizeS___30RAN"]').text
-			#status = listing.find_element_by_xpath('.//p[4][@class="styles__text___1gJzw styles__colorUrbanGrey60___2rwkI styles__overflowNormal___mT74G styles__singleline___nCFol styles__textAlignLeft___lqg5e styles__weightRegular___19l6i desktop__sizeS___30RAN"]').text
+			status = listing.find_element_by_xpath('.//p[4][@class="styles__text___1gJzw styles__colorUrbanGrey60___2rwkI styles__overflowNormal___mT74G styles__singleline___nCFol styles__textAlignLeft___lqg5e styles__weightRegular___19l6i desktop__sizeS___30RAN"]').text
 		
 			driver.execute_script("arguments[0].scrollIntoView();",listing)
 			
@@ -72,7 +73,7 @@ while index <=15:
 			listings_dict['product'] = product
 			listings_dict['price'] = price 
 			listings_dict['user'] = user
-			#listings_dict['status'] = status
+			listings_dict['status'] = status
 
 			writer.writerow(listings_dict.values())
 			

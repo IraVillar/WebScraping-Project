@@ -13,47 +13,46 @@ driver.get("https://www.carousell.ph/")
 #category_button = driver.find_element_by_xpath('//span[@class="padLeft6 cursorPointer"]')
 #category_button.click()
 
-#category_urls = driver.find_elements_by_xpath('//*[@id="root"]/div/div[4]/div[1]/div/div[1]/div[1]/div/a/@href')
+tab = driver.find_element_by_xpath('//*[@id="root"]/div/div[4]/div[1]/div[1]/div/div[2]')
+tab.click()
+time.sleep(2)
+tab.click()
+time.sleep(2)
+category_button = driver.find_element_by_xpath('//*[@id="root"]/div/div[4]/div[1]/div[1]/div/div[2]/div[27]/a/img')
+category_button.click()
 
-csv_file = open('hnf.csv', 'w', encoding='utf-8', newline='')
+csv_file = open('lifestyle.csv', 'w', encoding='utf-8', newline='')
 writer = csv.writer(csv_file)
-
-time.sleep(3)
-next_button = driver.find_element_by_xpath('//div[@class="styles__arrowContainer___1W_TE styles__arrowLeftRightContainer___1ZbYd styles__arrowRightContainer___3uvCS"]')
-next_button.click()
-time.sleep(1)
-property_button = driver.find_element_by_xpath('//div[10]/a[@class="styles__collectionLink___37_IC styles__link___9msaS"]')
-property_button.click()
-
-time.sleep(3)
 
 index = 1
 # We want to start the first two pages.
 # If everything works, we will change it to while True
-while index <=15:
+while index <=30:
 	try:
 		print("Scraping chunk number " + str(index))
 		index = index + 1
 		# Find all the reviews. The find_elements function will return a list of selenium select elements.
 		# Check the documentation here: http://selenium-python.readthedocs.io/locating-elements.html
+		
+
 		listings = driver.find_elements_by_xpath('//div[@class="styles__cardContent___TpQXu"]')
+		listings_dict = {}
 		# Iterate through the list and find the details of each review.
 		for listing in listings:
 			# Initialize an empty dictionary for each review
+			
 			listings_dict = {}
-			# Use try and except to skip the review elements that are empty. 
-			# Use relative xpath to locate the title.
-			# Once you locate the element, you can use 'element.text' to return its string.
 			# To get the attribute instead of the text of each element, use 'element.get_attribute(href) for example'
 			try:
 				product = listing.find_element_by_xpath('.//p[@class="styles__text___1gJzw styles__colorUrbanGrey60___2rwkI styles__overflowNormal___mT74G styles__singleline___nCFol styles__textAlignLeft___lqg5e styles__weightSemibold___uxIDP desktop__sizeS___30RAN"]').text
+
 			except:
 				continue
 
 			price = listing.find_element_by_xpath('.//p[@class="styles__text___1gJzw styles__colorUrbanGrey60___2rwkI styles__overflowNormal___mT74G styles__singleline___nCFol styles__textAlignLeft___lqg5e styles__weightRegular___19l6i desktop__sizeM___3k5LI"]').text
 			user = listing.find_element_by_xpath('.//p[@class="styles__text___1gJzw styles__colorUrbanGrey90___2NNa9 styles__overflowNormal___mT74G styles__singleline___nCFol styles__textAlignLeft___lqg5e styles__weightSemibold___uxIDP desktop__sizeS___30RAN"]').text
 			status = listing.find_element_by_xpath('.//p[4][@class="styles__text___1gJzw styles__colorUrbanGrey60___2rwkI styles__overflowNormal___mT74G styles__singleline___nCFol styles__textAlignLeft___lqg5e styles__weightRegular___19l6i desktop__sizeS___30RAN"]').text
-			#status = listing.find_element_by_xpath('//*[@id="root"]/div/div[3]/div[1]/div[2]/main/div[1]/div/div/div[1]/a[2]/p[4]').text
+		
 			driver.execute_script("arguments[0].scrollIntoView();",listing)
 			
 			#print('Product = {}'.format(product))
@@ -69,12 +68,11 @@ while index <=15:
 			#rating = review.find_element_by_xpath('//*[@id="reviews"]/div/div/div[2]/div/div[2]/div[1]/div/div[1]/div[1]/div[1]/span/span[3]/span[1]').text
 			
 			#driver.execute_script("arguments[0].scrollIntoView();",review)
+			
 			listings_dict['product'] = product
 			listings_dict['price'] = price 
 			listings_dict['user'] = user
 			listings_dict['status'] = status
-			# review_dict['date_published'] = date_published
-			#review_dict['rating'] = rating
 
 			writer.writerow(listings_dict.values())
 			
