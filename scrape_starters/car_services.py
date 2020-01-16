@@ -27,16 +27,10 @@ csv_file = open('car_services.csv', 'w', encoding='utf-8', newline='')
 writer = csv.writer(csv_file)
 
 index = 1
-# We want to start the first two pages.
-# If everything works, we will change it to while True
 while index <=30:
 	try:
 		print("Scraping chunk number " + str(index))
 		index = index + 1
-		# Find all the reviews. The find_elements function will return a list of selenium select elements.
-		# Check the documentation here: http://selenium-python.readthedocs.io/locating-elements.html
-		
-
 		listings = driver.find_elements_by_xpath('//div[@class="styles__cardContent___TpQXu"]')
 		listings_dict = {}
 		# Iterate through the list and find the details of each review.
@@ -57,20 +51,6 @@ while index <=30:
 		
 			driver.execute_script("arguments[0].scrollIntoView();",listing)
 			
-			#print('Product = {}'.format(product))
-			#print('Price = {}'.format(price))
-			#print('User = {}'.format(user))
-			#print('='*50)
-			
-			# Use relative xpath to locate text, username, date_published, rating.
-			# Your code here
-
-			# Uncomment the following lines once you verified the xpath of different fields
-			#text = review.find_element_by_xpath('.//span[@class = "pad6 onlyRightPad"]').text
-			#rating = review.find_element_by_xpath('//*[@id="reviews"]/div/div/div[2]/div/div[2]/div[1]/div/div[1]/div[1]/div[1]/span/span[3]/span[1]').text
-			
-			#driver.execute_script("arguments[0].scrollIntoView();",review)
-			
 			listings_dict['product'] = product
 			listings_dict['price'] = price 
 			listings_dict['user'] = user
@@ -81,10 +61,6 @@ while index <=30:
 			#print('Text={}'.format(text))
 			#print('Rating={}'.format(rating))
 
-		# We need to scroll to the bottom of the page because the button is not in the current view yet.
-		#driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-		#time.sleep(1)
-		# Locate the next button element on the page and then call `button.click()` to click it.
 		try:
 			button = driver.find_element_by_xpath('//button[@class="styles__button___3dxOP desktop__button___2Hl0n styles__medium___3KEDn styles__outline___3AGrh desktop__outline___2UF39 styles__loadMore___yYAF4"]')
 			#time.sleep(1)
